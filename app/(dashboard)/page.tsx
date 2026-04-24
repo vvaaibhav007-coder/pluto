@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { Link, Plus, Loader2, LogOut, Search, X, Download } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -40,7 +40,7 @@ function getCategoryClasses(category: string): string {
   return categoryColors[category] || categoryColors.Other
 }
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([])
@@ -491,5 +491,18 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-zinc-500 mb-4" />
+        <p className="text-zinc-500 text-sm">Loading dashboard...</p>
+      </div>
+    }>
+      <DashboardPageContent />
+    </Suspense>
   )
 }
