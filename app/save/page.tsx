@@ -2,6 +2,7 @@
 
 import { useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Loader2 } from 'lucide-react'
 
@@ -10,16 +11,13 @@ function SavePageContent() {
   const router = useRouter()
   const supabase = createClient()
 
-  useEffect(() => {
+useEffect(() => {
     const processShare = async () => {
-      // Extract shared data from query params
       const sharedUrl = searchParams.get('url') || searchParams.get('text') || ''
       const sharedTitle = searchParams.get('title') || ''
 
-      // Try to extract a URL from the text parameter if url is empty
       let urlToSave = sharedUrl
       if (!urlToSave.startsWith('http')) {
-        // Sometimes apps put the URL inside the text param
         const urlMatch = sharedUrl.match(/https?:\/\/[^\s]+/)
         if (urlMatch) {
           urlToSave = urlMatch[0]
@@ -31,11 +29,9 @@ function SavePageContent() {
         return
       }
 
-      // Check if user is authenticated
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {
-        // Not logged in: save URL to sessionStorage for post-auth processing
         sessionStorage.setItem('pluto_pending_share', JSON.stringify({
           url: urlToSave,
           title: sharedTitle,
@@ -44,7 +40,6 @@ function SavePageContent() {
         return
       }
 
-      // User is logged in: save the bookmark immediately
       try {
         const res = await fetch('/api/bookmarks', {
           method: 'POST',
@@ -57,7 +52,6 @@ function SavePageContent() {
           throw new Error(err.error || 'Failed to save')
         }
 
-        // Redirect to dashboard with success indicator
         router.replace('/?saved=true')
       } catch (error) {
         console.error('Failed to save shared bookmark:', error)
@@ -65,14 +59,26 @@ function SavePageContent() {
       }
     }
 
-    processShare()
+processShare()
   }, [searchParams, router, supabase])
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <div className="text-center space-y-4">
-        <Loader2 className="w-8 h-8 animate-spin text-zinc-400 mx-auto" />
-        <p className="text-zinc-400 text-sm">Saving bookmark...</p>
+      <div className="text-center space-y-6">
+        <div className="relative mx-auto w-16 h-16">
+          <div className="absolute inset-0 bg-zinc-500/20 blur-xl rounded-full animate-pulse" />
+          <Image 
+            src="/icon-192.png" 
+            alt="Pluto Logo" 
+            width={64} 
+            height={64} 
+            className="relative rounded-2xl border border-white/10 shadow-2xl"
+          />
+          <div className="absolute -bottom-2 -right-2 bg-zinc-950 rounded-full p-1 border border-white/10">
+            <Loader2 className="w-4 h-4 animate-spin text-zinc-400" />
+          </div>
+        </div>
+        <p className="text-zinc-400 text-sm font-medium tracking-wide">Saving to Pluto...</p>
       </div>
     </div>
   )

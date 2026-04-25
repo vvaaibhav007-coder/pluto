@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
+import Image from 'next/image'
 import { Link, Plus, Loader2, LogOut, Search, X, Download, Settings, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -297,9 +298,7 @@ function DashboardPageContent() {
 
       <header className="relative z-10 max-w-4xl mx-auto px-6 pt-8 pb-12 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center">
-            <div className="w-3 h-3 rounded-full bg-zinc-100" />
-          </div>
+          <Image src="/icon-192.png" alt="Pluto Logo" width={32} height={32} className="rounded-lg" />
           <h1 className="font-semibold tracking-tight text-lg">Pluto</h1>
         </div>
 

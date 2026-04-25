@@ -7,10 +7,15 @@ export const dynamic = 'force-dynamic'
 const DODO_WEBHOOK_SECRET = process.env.DODO_WEBHOOK_SECRET || ''
 
 function verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
-  if (!secret) return true // Skip verification if no secret configured (dev mode)
+  if (!secret) return true
+  if (!signature) return false
+  
   const hmac = crypto.createHmac('sha256', secret)
   hmac.update(payload)
   const expectedSignature = hmac.digest('hex')
+  
+  if (signature.length !== expectedSignature.length) return false
+  
   return crypto.timingSafeEqual(
     Buffer.from(signature),
     Buffer.from(expectedSignature)

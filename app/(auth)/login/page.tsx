@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { LogIn, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
@@ -59,8 +60,8 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm bg-zinc-900/50 border-white/10 backdrop-blur-xl shadow-2xl">
         <CardHeader className="text-center space-y-4 pt-8">
           <div className="flex justify-center">
-            <div className="h-12 w-12 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center shadow-2xl backdrop-blur-sm">
-              <LogIn className="w-6 h-6 text-zinc-300" />
+            <div className="h-12 w-12 bg-white/5 rounded-2xl border border-white/10 overflow-hidden shadow-2xl backdrop-blur-sm">
+              <Image src="/icon-192.png" alt="Pluto Logo" width={48} height={48} />
             </div>
           </div>
           <div className="space-y-1">
