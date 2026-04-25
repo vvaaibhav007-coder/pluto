@@ -40,6 +40,30 @@ export async function POST(request: Request) {
       )
     }
 
+    // Check free tier limit
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_pro')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.is_pro) {
+      const { count, error: countError } = await supabase
+        .from('bookmarks')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        
+      if (!countError && count !== null && count >= 100) {
+        return NextResponse.json(
+          { 
+            error: 'limit_reached', 
+            message: 'You have reached your free limit. Upgrade to Pluto Pro to save unlimited bookmarks.' 
+          },
+          { status: 403 }
+        )
+      }
+    }
+
     let body
     try {
       body = await request.json()
